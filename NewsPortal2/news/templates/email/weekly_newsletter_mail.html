@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+{% load i18n %}
+
+<html lang="en">
+
+<style>
+   table {
+    width: 100%; /* Ширина таблицы */
+    border: 10px;
+   }
+   td, th {
+    padding: 5px; /* Поля вокруг текста */
+    border: 10px;
+    vertical-align: 10px;
+   }
+   a {
+    text-decoration: none; /* Отменяем подчеркивание у ссылки */
+   }
+
+
+
+</style>
+
+<head>
+    <title> Недельная рассылка новостей по категории: {{ category.name }} </title>
+</head>
+<body>
+<h1> Здравствуйте, {{ username }}!<br>
+    новые статьи из категории < {{ category.name }} > за прошлую неделю в вашем разделе!
+</h1>
+<hr>
+<table>
+    <tr>
+        <td>
+            <h3>Title</h3>
+        </td>
+        <td>
+            <h3>Content</h3>
+        </td>
+        <td>
+            <h3>Author</h3>
+        </td>
+        <td>
+            <h3>Date/Time</h3>
+        </td>
+        <td>
+            <h3>
+                Link
+            </h3>
+        </td>
+    </tr>
+    {% for post in posts %}
+    <tr>
+        <td>
+            <font size="3">
+                {{ post.title }}
+            </font>
+        </td>
+        <td>
+            <font size="3">
+                {{ post.content|truncatechars:50 }}
+            </font>
+        </td>
+        <td>
+            <font size="3">
+                {{ post.author }}
+            </font>
+        </td>
+        <td>
+            <font size="3">
+                {{ post.time_of_creation|date:'d.m.Y/H:i' }}
+            </font>
+        </td>
+        <td>
+            <font size="3">
+                <a href="http://127.0.0.1:8000{% url 'post_detail' post.id %}">Detail</a>
+            </font>
+        </td>
+    </tr>
+    {% endfor%}
+</table>
+
+<br>
+</body>
+</html>

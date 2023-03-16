@@ -1,0 +1,95 @@
+{% extends 'index.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}
+Posts
+{% endblock %}
+
+{% block content %}
+<style>
+   table {
+    width: 100%; /* Ширина таблицы */
+    border: 10px;
+   }
+   td, th {
+    padding: 5px; /* Поля вокруг текста */
+    border: 10px;
+    vertical-align: 10px;
+   }
+   a {
+    text-decoration: none; /* Отменяем подчеркивание у ссылки */
+   }
+</style>
+
+<form method="GET">
+    {{ filter.form|crispy }}
+    <br>
+    <button type="submit" class="btn btn-success">Search</button>
+</form>
+<hr>
+{% if filter.qs %}
+<table align="center">
+    <thead>
+    <tr>
+        <td align="center">
+            <b>Title</b>
+        </td>
+        <td>
+            <b>Date/Time</b>
+        </td>
+        <td align="center">
+            <b>Content</b>
+        </td>
+        <td align="left">
+            <b>Category</b>
+        </td>
+    </tr>
+    </thead>
+    {% for post in filter.qs %}
+    <tr>
+        <td align="center">
+            <a href="{% url 'post_detail' post.id %}" style="color: #00bc00">{{ post.title }}</a>
+        </td>
+        <td>
+            {{ post.time_of_creation|date:'d.m.Y/H:i' }}
+        </td>
+        <td align="center">
+            {{ post.content|truncatechars:50 }}
+        </td>
+        <td>
+            <p align="left">
+                {% for category in post.category.all %}
+                <a href="{% url 'category_detail' category.id %}">"{{ category }}"</a>
+                {% endfor %}
+            </p>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<h3 align="center">Posts not found</h3>
+{% endif %}
+
+{% if is_paginated %}
+<!-- Если доступна предыдущая страница, то даём ссылку на неё и самую первую страницу -->
+{% if page_obj.has_previous %}
+<a href="?page=1">First</a>
+<a href="?page={{ page_obj.previous_page_number }}"><<<</a>
+{% endif %}
+<!-- Показываем только текущую страницу и ближайшие к ней, чтобы список не тянулся и не захламлял страницу -->
+{% for num in page_obj.paginator.page_range %}
+{% if page_obj.number == num %}
+<a>{{ num }}</a>
+{% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+<a href="?page={{ num }}">{{ num }}</a>
+{% endif %}
+{% endfor %}
+<!-- Если есть следующая страница, то даём ссылку на неё и на самую последнюю страницу -->
+{% if page_obj.has_next %}
+<a href="?page={{ page_obj.next_page_number }}">>>></a>
+<a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+{% endif %}
+{% endif %}
+
+{% endblock %}
